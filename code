@@ -1,0 +1,103 @@
+#Linear regression
+import matplotlib.pyplot as plt
+import pandas as pd
+
+#Mean Calculation
+def mean(values):
+    return sum(values)/float(len(values))
+#Variance Calculation
+def variance(values, mean):
+    return sum([(x-mean)**2 for x in values])
+
+
+
+# Calculate covariance between x and y
+def covariance(x, mean_x, y, mean_y):
+	covar = 0.0
+	for i in range(len(x)):
+		covar += (x[i] - mean_x) * (y[i] - mean_y)
+	return covar
+#Coefficients
+def coefficients(x,y):
+	x_mean, y_mean = mean(x), mean(y)
+	b1 = covariance(x, x_mean, y, y_mean) / variance(x, x_mean)
+	b0 = y_mean - b1 * x_mean
+	return [b0, b1]
+
+
+
+# data set
+df=pd.read_excel("carset.xlsx","Sheet1")
+price=df['price'].values.tolist()
+year=df['year'].values.tolist()
+kilometer=df['kilometer'].values.tolist()
+prediction=[]
+#prediction set
+fd=pd.read_excel("pred.xlsx")
+km=fd['km'].values.tolist()
+date=fd['date'].values.tolist()
+n=len(km)
+
+#for km vs price
+
+x_mean=mean(kilometer)
+y_mean=mean(price)
+x_var=variance(kilometer,x_mean)
+y_var=variance(price,y_mean)
+covar=covariance(kilometer,x_mean,price,y_mean)
+print("X-Mean:",x_mean)
+print("Y-Mean:",y_mean)
+print("X-variance:",x_var)
+print("Y-variance:",y_var)
+print("Covariance Between two variables:",covar)
+b0, b1 = coefficients(kilometer,price)
+print("Y-intercept:",b0)
+print("Slope:",b1)
+#For Predictions
+for i in range (0,n):
+    yhat=b0+b1*km[i]
+    prediction.append(yhat)
+print("X values as input:")
+print(km)
+print("Y predicted values:")
+print(prediction)
+
+'''X=[]
+X=x+x1
+Y=[]
+Y=y+prediction
+print(X)
+print(Y)
+'''
+# plotting the points  
+#plt.plot(x, y, color='green', marker='o', linestyle='dashed',linewidth=2, markersize=12)
+
+#Graph of initial values
+plt.scatter(kilometer,price,color='blue')
+#Graph of predicted values
+plt.scatter(km,prediction,color='red')
+  
+# naming the x axis 
+plt.xlabel('Kilometers used') 
+# naming the y axis 
+plt.ylabel('Price') 
+  
+# giving a title to my graph 
+plt.title('Kilometers vs Price') 
+  
+# function to show the plot 
+plt.show() 
+
+exit=True
+co=int(input("Continue?? 1=y/0=n"))
+while exit==True:
+    xd=int(input("Enter the X value:"))
+    yd=b0+(b1*xd)
+    print(" X value(in km):",xd)
+    print(" Y value(predicted price of car):",yd)
+    co=int(input("Continue?? 1=y/0=n"))
+    if co == 0:
+        exit=False
+    else:
+        continue
+    
